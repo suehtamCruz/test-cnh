@@ -40,10 +40,21 @@ export class AppComponent implements AfterViewInit {
     ScanbotSDK.instance.createDocumentScanner({
       containerId: 'scanner',
       autoCaptureEnabled: true,
-      onDocumentDetected: (res) => {
+      onDocumentDetected: async (res) => {
         console.log('onDocumentDetected', res);
+
+        const imageProcessor = ScanbotSDK.instance.createImageProcessor(
+          res.cropped
+        );
+        const filter = new ScanbotSDK.imageFilters.CustomBinarizationFilter();
+        filter.outputMode = 'ANTIALIASED';
+
+        (await imageProcessor).applyFilter(filter);
+        (await imageProcessor).processedImage().then((resp) => {});
         const base64 = encode(res.cropped);
+
         console.log('base64', base64);
+
         this.imgBase64 = 'data:image/png;base64,' + base64;
       },
       onCaptureButtonClick: (res) => {
