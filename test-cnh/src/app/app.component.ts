@@ -1,6 +1,6 @@
 import { AfterViewInit, Component } from '@angular/core';
+import { encode } from 'base64-arraybuffer';
 import ScanbotSDK from 'scanbot-web-sdk';
-import type { IDocumentScannerHandle } from 'scanbot-web-sdk/@types';
 
 @Component({
   selector: 'app-root',
@@ -42,18 +42,9 @@ export class AppComponent implements AfterViewInit {
       autoCaptureEnabled: true,
       onDocumentDetected: (res) => {
         console.log('onDocumentDetected', res);
-        const cropped = ScanbotSDK.instance.cropAndRotateImageCcw(
-          res.cropped,
-          res.polygon,
-          0
-        );
-        ScanbotSDK.instance
-          .createImageProcessor(res.cropped)
-          .then((processor) => {
-            console.log('processor', processor);
-          });
-
-        console.log('croped', cropped);
+        const base64 = encode(res.cropped);
+        console.log('base64', base64);
+        this.imgBase64 = 'data:image/png;base64,' + base64;
       },
       onCaptureButtonClick: (res) => {
         console.log('onCaptureButtonClick', res);
