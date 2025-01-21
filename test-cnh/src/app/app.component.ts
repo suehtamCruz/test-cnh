@@ -18,20 +18,20 @@ export class AppComponent implements AfterViewInit {
   constructor() {
     ScanbotSDK.initialize({
       licenseKey:
-        'dg5WgphDzZcb2YQNiPZ8Q3qRMz0Ktw' +
-        'UQ6Ha+VUWtcsvdchmp8PeJgtGabUB2' +
-        'siI+zd+3scGH0WGDv4DmUNINC9JKym' +
-        '2vuPugLKawvJ3OxHsWtGWFv3mTM61a' +
-        'IKYMgxSibTY3B0wTMOso5WnFZGTg7C' +
-        'aDt21wRgMQm6c1anIiqHba14GVVESM' +
-        '4U98RIORKTLp5BfgKmJjMlDYtK6Uhw' +
-        '7UtlYJi4sYLaNcV1plM2Fx3cJEy4zV' +
-        'zI4vrU+u56ylvuykBc38QZ56cepatC' +
-        'eGkXS4LteKAwAqkE9IUHg32ItNWFjw' +
-        'Yx3g6qJTQcFqEkMpV1auFYNC0RU2Zf' +
-        'd7xN2zLHI7qQ==\nU2NhbmJvdFNESw' +
-        'psb2NhbGhvc3R8dGVzdC1jbmgtOXk1' +
-        'My52ZXJjZWwuYXBwCjE3MzgxMDg3OT' +
+        'pSP9P5YkZMgVL3o6ggNc5b1ftOoWNy' +
+        'n5S7c0HHEWG1hLslylyjzTqoanJA0O' +
+        'E8YMrBWDVnEUbdH9Pt0Clu4YgI/UyP' +
+        '3gSu0xxLbCScbt04bXnUzluo3COVlm' +
+        'DocGiQEDus74oWIk7k/dDxQ1W9hPiQ' +
+        'Os1lC4P+8ZhF/YpCN08/DW2/ONH/jL' +
+        'dYqBydo7tIpWrklf5MQZMAeVJNgv9m' +
+        '2BmWcAkQdpX7F4vW3N0p14fmboL6v5' +
+        'YBFnuVvKmMCDMffdds/I4CKFqEdvfA' +
+        'fvMbR+pKFF/xToZhf90XgrLOw80JVy' +
+        'aLTzu+CSOGOZI6c8hUQLvRlhAhXIpQ' +
+        'B3x8kr/zZtmA==\nU2NhbmJvdFNESw' +
+        'psb2NhbGhvc3R8dGVzdC1jbmgteTNt' +
+        'eC52ZXJjZWwuYXBwCjE3MzgxMDg3OT' +
         'kKODM4ODYwNwo4\n',
     });
   }
