@@ -45,6 +45,18 @@ export class AppComponent implements AfterViewInit {
     ScanbotSDK.instance.createDocumentScanner({
       containerId: 'scanner',
       autoCaptureEnabled: true,
+      useImageCaptureAPI: true,
+      spinnerColor: '#00b131',
+      videoConstraints: {
+        facingMode: 'back',
+        width: { ideal: 800, max: 900 },
+        height: { ideal: 600, max: 900 },
+        experimental: {
+          focusMode: 'continous',
+          focusDistance: 0,
+        },
+      } as MediaTrackConstraints,
+      acceptedBrightnessThreshold: 150,
       onDocumentDetected: async (res) => {
         // console.log('onDocumentDetected', res);
 
@@ -78,16 +90,6 @@ export class AppComponent implements AfterViewInit {
       onError: (res) => {
         console.log('onError', res);
       },
-      spinnerColor: '#00b131',
-      videoConstraints: {
-        facingMode: 'back',
-        width: { ideal: 800, max: 900 },
-        height: { ideal: 600, max: 900 },
-        experimental: {
-          focusMode: 'continous',
-          focusDistance: 0,
-        },
-      } as MediaTrackConstraints,
     });
 
     console.log('scanner', document.getElementById('scanner'));
