@@ -9,7 +9,11 @@ import type { IDocumentScannerHandle } from 'scanbot-web-sdk/@types';
 })
 export class AppComponent implements AfterViewInit {
   title = 'test-cnh';
-  private documentScanner!: IDocumentScannerHandle;
+
+  onDocumentDetected: any;
+  onCaptureButtonClick: any;
+  onError: any;
+
   constructor() {
     ScanbotSDK.initialize({
       licenseKey:
@@ -49,7 +53,7 @@ export class AppComponent implements AfterViewInit {
         facingMode: 'environment',
         resizeMode: 'none',
         width: { ideal: 800, max: 900 },
-        height: { ideal: 600,max: 900 },
+        height: { ideal: 600, max: 900 },
         experimental: {
           focusMode: 'continous',
           focusDistance: 0,
