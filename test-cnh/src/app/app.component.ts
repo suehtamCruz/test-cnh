@@ -14,7 +14,13 @@ export class AppComponent implements AfterViewInit {
   onCaptureButtonClick: any;
   onError: any;
   imgBase64: string | null = null;
-
+  resultOfAnalisys!:
+    | 'NO_DOCUMENT'
+    | 'VERY_POOR'
+    | 'POOR'
+    | 'REASONABLE'
+    | 'GOOD'
+    | 'EXCELLENT';
   constructor() {
     ScanbotSDK.initialize({
       licenseKey:
@@ -35,13 +41,12 @@ export class AppComponent implements AfterViewInit {
         'kKODM4ODYwNwo4\n',
     });
   }
-
   ngAfterViewInit(): void {
     ScanbotSDK.instance.createDocumentScanner({
       containerId: 'scanner',
       autoCaptureEnabled: true,
       onDocumentDetected: async (res) => {
-        console.log('onDocumentDetected', res);
+        // console.log('onDocumentDetected', res);
 
         const imageProcessor = ScanbotSDK.instance.createImageProcessor(
           res.cropped
@@ -53,9 +58,19 @@ export class AppComponent implements AfterViewInit {
         (await imageProcessor).processedImage().then((resp) => {});
         const base64 = encode(res.cropped);
 
-        console.log('base64', base64);
+        // console.log('base64', base64);
 
         this.imgBase64 = 'data:image/png;base64,' + base64;
+
+        const analyser =
+          await ScanbotSDK.instance.createDocumentQualityAnalyzer({
+            maxImageSize: 2000,
+            patchSize: 1000,
+          });
+
+        const result = await analyser.analyze(res.cropped);
+        console.log('resultAnalys', result);
+        this.resultOfAnalisys = result.quality;
       },
       onCaptureButtonClick: (res) => {
         console.log('onCaptureButtonClick', res);
@@ -74,6 +89,7 @@ export class AppComponent implements AfterViewInit {
         },
       } as MediaTrackConstraints,
     });
+
     console.log('scanner', document.getElementById('scanner'));
   }
 }
