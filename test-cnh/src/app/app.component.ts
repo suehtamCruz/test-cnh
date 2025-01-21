@@ -13,6 +13,7 @@ export class AppComponent implements AfterViewInit {
   onDocumentDetected: any;
   onCaptureButtonClick: any;
   onError: any;
+  imgBase64: string | null = null;
 
   constructor() {
     ScanbotSDK.initialize({
@@ -38,9 +39,21 @@ export class AppComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     ScanbotSDK.instance.createDocumentScanner({
       containerId: 'scanner',
-      autoCaptureEnabled: false,
+      autoCaptureEnabled: true,
       onDocumentDetected: (res) => {
         console.log('onDocumentDetected', res);
+        const cropped = ScanbotSDK.instance.cropAndRotateImageCcw(
+          res.cropped,
+          res.polygon,
+          0
+        );
+        ScanbotSDK.instance
+          .createImageProcessor(res.cropped)
+          .then((processor) => {
+            console.log('processor', processor);
+          });
+
+        console.log('croped', cropped);
       },
       onCaptureButtonClick: (res) => {
         console.log('onCaptureButtonClick', res);
@@ -50,8 +63,7 @@ export class AppComponent implements AfterViewInit {
       },
       spinnerColor: '#00b131',
       videoConstraints: {
-        facingMode: 'environment',
-        resizeMode: 'none',
+        facingMode: 'back',
         width: { ideal: 800, max: 900 },
         height: { ideal: 600, max: 900 },
         experimental: {
