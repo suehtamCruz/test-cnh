@@ -21,6 +21,9 @@ export class AppComponent implements AfterViewInit {
     | 'REASONABLE'
     | 'GOOD'
     | 'EXCELLENT';
+
+  private documentScanner: any;
+
   constructor() {
     ScanbotSDK.initialize({
       licenseKey:
@@ -41,55 +44,89 @@ export class AppComponent implements AfterViewInit {
         'kKODM4ODYwNwo4\n',
     });
   }
-  ngAfterViewInit(): void {
-    ScanbotSDK.instance.createDocumentScanner({
+
+  async ngAfterViewInit(): Promise<void> {
+    this.documentScanner = await ScanbotSDK.instance.createDocumentScanner({
       containerId: 'scanner',
       autoCaptureEnabled: true,
       spinnerColor: '#00b131',
+      // Increase quality requirements
+      acceptedAngleScore: 85, // Require straighter angles
+      acceptedSizeScore: 85, // Require larger document size
+      autoCaptureSensitivity: 0.75, // More sensitive auto-capture
+      acceptedBrightnessThreshold: 100, // Require better lighting
       videoConstraints: {
         facingMode: 'back',
-        width: { ideal: 800, max: 900 },
-        height: { ideal: 600, max: 900 },
+        width: { ideal: 1920, max: 3840 }, // Increased resolution
+        height: { ideal: 1080, max: 2160 },
         experimental: {
           focusMode: 'continous',
           focusDistance: 0,
         },
       } as MediaTrackConstraints,
+      text: {
+        hint: {
+          OK: 'Documento detectado com sucesso!',
+          OK_SmallSize: 'O documento está muito pequeno. Aproxime mais a câmera.',
+          OK_BadAngles: 'Ângulo ruim. Mantenha a câmera reta sobre o documento.',
+          OK_BadAspectRatio: 'Gire o dispositivo para que o documento se encaixe melhor na tela.',
+          OK_OffCenter: 'Centralize o documento na tela.',
+          Error_NothingDetected: 'Posicione a CNH no centro da tela.',
+          Error_Brightness: 'Ambiente muito escuro. Tente melhorar a iluminação.',
+          Error_Noise: 'Mova o documento para uma superfície limpa e sem reflexos.'
+        }
+      },
       onDocumentDetected: async (res) => {
-        // console.log('onDocumentDetected', res);
+        if (!res.success) {
+          return;
+        }
 
-        const imageProcessor = ScanbotSDK.instance.createImageProcessor(
-          res.cropped
-        );
-        const filter = new ScanbotSDK.imageFilters.CustomBinarizationFilter();
-        filter.outputMode = 'ANTIALIASED';
+        try {
+          // Process the image for better text recognition
+          const imageProcessor = await ScanbotSDK.instance.createImageProcessor(res.cropped);
+          const filter = new ScanbotSDK.imageFilters.CustomBinarizationFilter();
+          filter.outputMode = 'ANTIALIASED';
+          await imageProcessor.applyFilter(filter);
 
-        (await imageProcessor).applyFilter(filter);
-        (await imageProcessor).processedImage().then((resp) => {});
-        const base64 = encode(res.cropped);
-
-        // console.log('base64', base64);
-
-        this.imgBase64 = 'data:image/png;base64,' + base64;
-
-        const analyser =
-          await ScanbotSDK.instance.createDocumentQualityAnalyzer({
-            maxImageSize: 2000,
-            patchSize: 1000,
+          // Analyze document quality
+          const analyser = await ScanbotSDK.instance.createDocumentQualityAnalyzer({
+            maxImageSize: 3000,
+            patchSize: 1500,
           });
 
-        const result = await analyser.analyze(res.cropped);
-        console.log('resultAnalys', result);
-        this.resultOfAnalisys = result.quality;
+          const qualityResult = await analyser.analyze(res.cropped);
+          this.resultOfAnalisys = qualityResult.quality;
+
+          // Only proceed if quality is GOOD or EXCELLENT
+          if (qualityResult.quality !== 'GOOD' && qualityResult.quality !== 'EXCELLENT') {
+            this.documentScanner.enableAutoCapture(); // Re-enable capture for next attempt
+            return;
+          }
+
+          // If all checks pass, save the image
+          const base64 = encode(res.cropped);
+          this.imgBase64 = 'data:image/png;base64,' + base64;
+
+          // Temporarily disable auto-capture after successful detection
+          this.documentScanner.disableAutoCapture();
+
+          // Re-enable after a short delay
+          setTimeout(() => {
+            this.documentScanner.enableAutoCapture();
+          }, 2000);
+
+        } catch (error) {
+          console.error('Error processing document:', error);
+          this.documentScanner.enableAutoCapture();
+        }
       },
       onCaptureButtonClick: (res) => {
-        console.log('onCaptureButtonClick', res);
+        console.log('Manual capture:', res);
       },
-      onError: (res) => {
-        console.log('onError', res);
+      onError: (error) => {
+        console.error('Scanner error:', error);
+        this.documentScanner?.enableAutoCapture();
       },
     });
-
-    console.log('scanner', document.getElementById('scanner'));
   }
 }
