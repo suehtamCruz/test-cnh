@@ -55,6 +55,7 @@ export class AppComponent implements AfterViewInit {
       acceptedSizeScore: 85, // Require larger document size
       autoCaptureSensitivity: 0.75, // More sensitive auto-capture
       acceptedBrightnessThreshold: 100, // Require better lighting
+      preferredCamera: 'back',
       videoConstraints: {
         facingMode: 'back',
         width: { ideal: 1920, max: 3840 }, // Increased resolution
@@ -67,14 +68,19 @@ export class AppComponent implements AfterViewInit {
       text: {
         hint: {
           OK: 'Documento detectado com sucesso!',
-          OK_SmallSize: 'O documento está muito pequeno. Aproxime mais a câmera.',
-          OK_BadAngles: 'Ângulo ruim. Mantenha a câmera reta sobre o documento.',
-          OK_BadAspectRatio: 'Gire o dispositivo para que o documento se encaixe melhor na tela.',
+          OK_SmallSize:
+            'O documento está muito pequeno. Aproxime mais a câmera.',
+          OK_BadAngles:
+            'Ângulo ruim. Mantenha a câmera reta sobre o documento.',
+          OK_BadAspectRatio:
+            'Gire o dispositivo para que o documento se encaixe melhor na tela.',
           OK_OffCenter: 'Centralize o documento na tela.',
           Error_NothingDetected: 'Posicione a CNH no centro da tela.',
-          Error_Brightness: 'Ambiente muito escuro. Tente melhorar a iluminação.',
-          Error_Noise: 'Mova o documento para uma superfície limpa e sem reflexos.'
-        }
+          Error_Brightness:
+            'Ambiente muito escuro. Tente melhorar a iluminação.',
+          Error_Noise:
+            'Mova o documento para uma superfície limpa e sem reflexos.',
+        },
       },
       onDocumentDetected: async (res) => {
         if (!res.success) {
@@ -83,22 +89,28 @@ export class AppComponent implements AfterViewInit {
 
         try {
           // Process the image for better text recognition
-          const imageProcessor = await ScanbotSDK.instance.createImageProcessor(res.cropped);
+          const imageProcessor = await ScanbotSDK.instance.createImageProcessor(
+            res.cropped
+          );
           const filter = new ScanbotSDK.imageFilters.CustomBinarizationFilter();
           filter.outputMode = 'ANTIALIASED';
           await imageProcessor.applyFilter(filter);
 
           // Analyze document quality
-          const analyser = await ScanbotSDK.instance.createDocumentQualityAnalyzer({
-            maxImageSize: 3000,
-            patchSize: 1500,
-          });
+          const analyser =
+            await ScanbotSDK.instance.createDocumentQualityAnalyzer({
+              maxImageSize: 3000,
+              patchSize: 1500,
+            });
 
           const qualityResult = await analyser.analyze(res.cropped);
           this.resultOfAnalisys = qualityResult.quality;
 
           // Only proceed if quality is GOOD or EXCELLENT
-          if (qualityResult.quality !== 'GOOD' && qualityResult.quality !== 'EXCELLENT') {
+          if (
+            qualityResult.quality !== 'GOOD' &&
+            qualityResult.quality !== 'EXCELLENT'
+          ) {
             this.documentScanner.enableAutoCapture(); // Re-enable capture for next attempt
             return;
           }
@@ -114,7 +126,6 @@ export class AppComponent implements AfterViewInit {
           setTimeout(() => {
             this.documentScanner.enableAutoCapture();
           }, 2000);
-
         } catch (error) {
           console.error('Error processing document:', error);
           this.documentScanner.enableAutoCapture();
