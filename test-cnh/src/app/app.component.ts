@@ -45,7 +45,6 @@ export class AppComponent implements AfterViewInit {
     ScanbotSDK.instance.createDocumentScanner({
       containerId: 'scanner',
       autoCaptureEnabled: true,
-      useImageCaptureAPI: true,
       spinnerColor: '#00b131',
       videoConstraints: {
         facingMode: 'back',
@@ -56,7 +55,6 @@ export class AppComponent implements AfterViewInit {
           focusDistance: 0,
         },
       } as MediaTrackConstraints,
-      acceptedBrightnessThreshold: 150,
       onDocumentDetected: async (res) => {
         // console.log('onDocumentDetected', res);
 
