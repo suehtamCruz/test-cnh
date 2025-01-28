@@ -1,7 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { BarcodeFormat } from '@zxing/library';
-import { encode } from 'base64-arraybuffer';
-import ScanbotSDK from 'scanbot-web-sdk';
 import QrScanner from 'qr-scanner';
 @Component({
   selector: 'app-root',
@@ -27,26 +25,7 @@ export class AppComponent implements AfterViewInit {
     BarcodeFormat.CODE_128,
     BarcodeFormat.DATA_MATRIX,
   ];
-  constructor() {
-    ScanbotSDK.initialize({
-      licenseKey:
-        'pSP9P5YkZMgVL3o6ggNc5b1ftOoWNy' +
-        'n5S7c0HHEWG1hLslylyjzTqoanJA0O' +
-        'E8YMrBWDVnEUbdH9Pt0Clu4YgI/UyP' +
-        '3gSu0xxLbCScbt04bXnUzluo3COVlm' +
-        'DocGiQEDus74oWIk7k/dDxQ1W9hPiQ' +
-        'Os1lC4P+8ZhF/YpCN08/DW2/ONH/jL' +
-        'dYqBydo7tIpWrklf5MQZMAeVJNgv9m' +
-        '2BmWcAkQdpX7F4vW3N0p14fmboL6v5' +
-        'YBFnuVvKmMCDMffdds/I4CKFqEdvfA' +
-        'fvMbR+pKFF/xToZhf90XgrLOw80JVy' +
-        'aLTzu+CSOGOZI6c8hUQLvRlhAhXIpQ' +
-        'B3x8kr/zZtmA==\nU2NhbmJvdFNESw' +
-        'psb2NhbGhvc3R8dGVzdC1jbmgteTNt' +
-        'eC52ZXJjZWwuYXBwCjE3MzgxMDg3OT' +
-        'kKODM4ODYwNwo4\n',
-    });
-  }
+  constructor() {}
 
   async ngAfterViewInit(): Promise<void> {
     console.log(document.getElementById('video'));
