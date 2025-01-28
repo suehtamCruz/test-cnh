@@ -1,7 +1,15 @@
 <h1>Scanner</h1>
 
-<div id="scanner"></div>
+<!-- <zxing-scanner
+  (scanSuccess)="scanSuccessHandler($event)"
+  (torchCompatible)="onTorchCompatible($event)"
+  (camerasFound)="camerasFoundHandler($event)"
+  (camerasNotFound)="camerasNotFoundHandler($event)"
+  (scanError)="scanErrorHandler($event)"
+  (scanComplete)="scanCompleteHandler($event)"
+  [formats]="allowedFormats"
+></zxing-scanner> -->
 
-<img [src]="imgBase64" *ngIf="imgBase64" alt="" />
+<video id="video"></video>
 
 <p>Qualidade da imagem: {{ resultOfAnalisys }}</p>
